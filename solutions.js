@@ -116,35 +116,61 @@ console.log(calcDiff({ skate: 10, painting: 20 }, 19));
 // ========== Задача 9 DOM ==========
 
 /*
-const a = +document.getElementById('a').value;
-const b = +document.getElementById('b').value;
-const c = +document.getElementById('c').value;
-const w = +document.getElementById('w').value;
-const h = +document.getElementById('h').value;
+const btn = document.getElementById('determine-btn');
+btn.addEventListener('click', checkFits);
 
-const btn = document.getElementById('brick-btn');
-btn.addEventListener('click', brickFits);
-
-function brickFits() {
-  if ([a, b, c, w, h].some((v) => v < 0)) {
-    alert("Values can't be negative");
-    return;
+function brickFits(a, b, c, w, h) {
+  if (a < 0 || b < 0 || c < 0 || w < 0 || h < 0) {
+    return false;
   }
 
+  const sorted = [a, b, c].sort((x, y) => x - y);
+
+  return sorted[0] <= w && sorted[1] <= h;
+}
+
+function checkFits() {
+  const height = document.getElementById('height').value;
+  const width = document.getElementById('width').value;
+  const depth = document.getElementById('depth').value;
+  const holeWidth = document.getElementById('hole-width').value;
+  const holeHeight = document.getElementById('hole-height').value;
+
+  const fieldsFilled = validateFields(
+    height,
+    width,
+    depth,
+    holeHeight,
+    holeWidth
+  );
+
+  if (fieldsFilled) {
+    const canFit = brickFits(
+      Number(height),
+      Number(width),
+      Number(depth),
+      Number(holeWidth),
+      Number(holeHeight)
+    );
+
+    alert(`Цегла поміщається: ${canFit}`);
+  } else {
+    alert('Заповніть всі поля форми');
+  }
+}
+
+function validateFields(height, width, depth, holeHeight, holeWidth) {
   if (
-    (a <= w && b <= h) ||
-    (a <= h && b <= w) ||
-    (c <= w && b <= h) ||
-    (c <= h && b <= w) ||
-    (a <= w && c <= h) ||
-    (a <= h && c <= w)
+    height === '' ||
+    width === '' ||
+    depth === '' ||
+    holeWidth === '' ||
+    holeHeight === ''
   ) {
-    alert(true);
-    return;
+    return false;
   }
 
-  alert(false);
-  return;
+  return true;
 }
 */
 
@@ -268,53 +294,49 @@ console.log(checkParentheses('((()))'));
 // ========== Задача 15 ==========
 
 /*
-const container = document.querySelector('.container');
+const phrase = prompt('Введіть фразу:');
 
-function fn() {
-  const phrase = prompt('Enter phrase', '');
+const words = phrase.split(' ');
 
-  const words = phrase.split(' ');
+const aCount = phrase.split('a').length - 1;
 
-  words.forEach((w, i) => {
-    const item = document.createElement('li');
+const listItems = words.map((word, index) => {
+  if (index === 0) {
+    word = word.toUpperCase();
+  }
 
-    i === 0
-      ? (item.textContent = w.toUpperCase())
-      : i > words.length - 3
-      ? (item.textContent = w.toLowerCase())
-      : (item.textContent = w);
+  if (index === words.length - 2 || index === words.length - 1) {
+    word = word.toLowerCase();
+  }
 
-    container.appendChild(item);
-  });
+  return `<li>${word}</li>`;
+});
 
-  let numOfA = phrase.match(/a/g);
-  alert(numOfA || 0);
+const ul = document.createElement('ul');
+ul.innerHTML = listItems.join('');
 
-  let timeout;
+document.body.appendChild(ul);
 
-  const showAlert = () => {
-    if (confirm('Ви ще тут?')) {
-      clearTimeout(timeout);
-      timeout = setTimeout(showAlert, 5 * 60 * 1000);
-    } else {
+alert(`Буква "a" зустрічається ${aCount} разів`);
+
+// Таймер неактивності
+
+let inactivityTimer = setTimeout(() => {
+  const response = confirm('Ви ще тут?');
+  if (!response) {
+    window.close();
+  }
+}, 5 * 60 * 1000);
+
+document.addEventListener('mousemove', () => {
+  clearTimeout(inactivityTimer);
+  inactivityTimer = setTimeout(() => {
+    const response = confirm('Ви ще тут?');
+    if (!response) {
       window.close();
     }
-  };
-
-  timeout = setTimeout(showAlert, 5 * 60 * 1000);
-
-  document.addEventListener('mousemove', function () {
-    clearTimeout(timeout);
-    timeout = setTimeout(showAlert, 5 * 60 * 1000);
-  });
-
-  document.addEventListener('keypress', function () {
-    clearTimeout(timeout);
-    timeout = setTimeout(showAlert, 5 * 60 * 1000);
-  });
-}
-
-fn();
+  }, 5 * 60 * 1000);
+});
 */
 
 // ========== Задача 16 ==========
